@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Auth/Login';
 import Register from './Auth/Register';
+import ClientProfile from './Clients/ClientProfile';
 import './App.css';
 
 function App() {
@@ -49,6 +50,17 @@ function App() {
                 <Navigate to="/login" />
               )
             } 
+          />
+
+          <Route
+            path="/profile"
+            element={
+              isAuthenticated() ? (
+                <ClientProfile />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
 
           {/* Rota padrão */}

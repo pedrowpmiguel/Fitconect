@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({
-        email: '',
+        username: '', // Mudado de 'email' para 'username'
         password: ''
     });
     const [error, setError] = useState(null);
@@ -24,14 +24,14 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('/api/auth/login', { // Ajustei o endpoint
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: formData.username, // O teu backend espera 'username' ou 'email'
+                    username: formData.username, // Agora está correto
                     password: formData.password
                 })
             });
@@ -61,13 +61,13 @@ const Login = () => {
             window.dispatchEvent(new Event('userChanged'));
             console.log('Evento userChanged disparado');
 
-            setFormData({ email: '', password: '' });
+            setFormData({ username: '', password: '' });
 
             // Redireciona conforme o role
             if (data.data.user.role === 'admin') {
                 navigate('/produtos');
             } else {
-                navigate('/');
+                navigate('/profile');
             }
 
         } catch (err) {
@@ -85,12 +85,12 @@ const Login = () => {
 
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
-                    <label htmlFor="email">Email ou Username:</label>
+                    <label htmlFor="username">Email ou Username:</label>
                     <input
                         type="text"
-                        id="email"
-                        name="email"
-                        value={formData.email}
+                        id="username"
+                        name="username"
+                        value={formData.username}
                         onChange={handleChange}
                         required
                         placeholder="exemplo@email.com ou username"
