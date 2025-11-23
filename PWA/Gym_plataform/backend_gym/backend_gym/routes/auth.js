@@ -10,11 +10,11 @@ const router = express.Router();
 const generateToken = (userId) => {
   console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Definido' : 'NÃO DEFINIDO');
   console.log('JWT_EXPIRE:', process.env.JWT_EXPIRE || '7d');
-  
+
   // usar chave temporaria
   const secret = process.env.JWT_SECRET || 'my_super_secret_jwt_key_2024_gym_management_system_xyz123';
   console.log('Usando secret:', secret ? 'SIM' : 'NÃO');
-  
+
   return jwt.sign(
     { userId },
     secret,
@@ -69,7 +69,7 @@ router.post("/register", async (req, res) => {
         username: user.username,
         timestamp: Date.now()
       });
-      
+
       qrCodeUrl = await QRCode.toDataURL(qrData);
       user.qrCode = qrCodeUrl;
       await user.save();
@@ -112,7 +112,7 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     console.error('Erro no registo:', error);
     console.error('Stack trace:', error.stack);
-    
+
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0];
       return res.status(400).json({
@@ -214,62 +214,104 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// login com QR code
+// LOGIN COM QR CODE - /api/auth/login/qr
 router.post("/login/qr", async (req, res) => {
   try {
-    const { qrData } = req.body;
+    console.log('📥 Dados recebidos no /login/qr:', req.body);
 
-    if (!qrData) {
+    // Tente desestruturar o objeto aninhado 'qrCode' (preferencial)
+    const { qrCode, username: name, password, isQrcode } = req.body;
+
+    let qrData = qrCode || req.body; // Use 'qrCode' se existir, ou use o corpo diretamente
+
+    // Desestruture os dados do QR Code (seja do 'qrCode' aninhado ou do corpo principal)
+    const { userId, username, timestamp } = qrData;
+
+    // Se estiver a usar o formato novo (name, password)
+    let finalUsername = name;
+    let finalPassword = password;
+
+
+    // Detectar formato do QR Code
+    if (userId && username && timestamp) {
+      // FORMATO ANTIGO/PADRÃO: {userId, username, timestamp}
+      console.log('🔄 Detectado formato padrão (JSON com ID)');
+
+      // Buscar utilizador pelo ID do QR Code
+      const user = await User.findById(userId);
+      if (!user) {
+        console.log('❌ Utilizador não encontrado:', userId);
+        return res.status(401).json({
+          success: false,
+          message: 'QR Code inválido - utilizador não encontrado'
+        });
+      }
+
+      // A password para validação é a password hasheada guardada no BD
+      finalUsername = user.username;
+      finalPassword = user.password;
+
+      console.log('✅ Utilizador encontrado (por ID):', finalUsername);
+
+    } else if (finalUsername && finalPassword && isQrcode) {
+      // FORMATO NOVO: {name, password, isQrcode}
+      console.log('🔄 Detectado formato novo (username e password em texto claro)');
+
+    } else {
+      // Formato inválido
+      console.log('❌ Dados incompletos ou formato inválido:', req.body);
       return res.status(400).json({
         success: false,
-        message: 'Dados do QR Code são obrigatórios'
+        // Mensagem mais clara
+        message: 'Dados do QR Code são obrigatórios e devem incluir userId, username e timestamp (ou name, password e isQrcode).'
       });
     }
 
-    let parsedData;
-    try {
-      parsedData = JSON.parse(qrData);
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: 'QR Code inválido'
-      });
-    }
+    // Encontrar user
+    const user = await User.findOne({
+      $or: [{ username: finalUsername }, { email: finalUsername }]
+    });
 
-    const { userId, timestamp } = parsedData;
-    
-    // verifica validade do qrcode
-    const now = Date.now();
-    if (now - timestamp > 5 * 60 * 1000) {
-      return res.status(400).json({
-        success: false,
-        message: 'QR Code expirado'
-      });
-    }
-
-    // encontrar user
-    const user = await User.findById(userId);
     if (!user) {
+      console.log('❌ Utilizador não encontrado:', finalUsername);
       return res.status(401).json({
         success: false,
-        message: 'Utilizador não encontrado'
+        message: 'QR Code inválido - utilizador não encontrado'
       });
     }
 
-    
+    console.log('✅ Utilizador encontrado:', user.username);
+
+    // Verificar se conta está ativa
     if (!user.isActive) {
+      console.log('❌ Conta desativada:', user.username);
       return res.status(401).json({
         success: false,
         message: 'Conta desativada'
       });
     }
 
-    // gerar token
+    // Validar password
+    const isPasswordValid = await user.matchPassword(finalPassword);
+    console.log('🔐 Password válida?', isPasswordValid);
+
+    if (!isPasswordValid) {
+      console.log('❌ Password inválida');
+      return res.status(401).json({
+        success: false,
+        message: 'QR Code inválido ou expirado'
+      });
+    }
+
+    // Gerar token
     const token = generateToken(user._id);
+    console.log('🎫 Token gerado');
 
     // Atualizar último login
     user.lastLogin = new Date();
     await user.save();
+
+    console.log('✅ Login QR bem-sucedido:', user.username);
 
     res.json({
       success: true,
@@ -281,7 +323,7 @@ router.post("/login/qr", async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erro no login por QR Code:', error);
+    console.error('💥 Erro no login QR:', error);
     res.status(500).json({
       success: false,
       message: 'Erro interno do servidor',
@@ -289,7 +331,6 @@ router.post("/login/qr", async (req, res) => {
     });
   }
 });
-
 // gerar novo QR Code
 router.post("/qr/generate", async (req, res) => {
   try {
@@ -300,9 +341,9 @@ router.post("/qr/generate", async (req, res) => {
       username: user.username,
       timestamp: Date.now()
     });
-    
+
     const qrCodeUrl = await QRCode.toDataURL(qrData);
-    
+
     // atualizar QR Code no user
     user.qrCode = qrCodeUrl;
     await user.save();
@@ -329,7 +370,7 @@ router.post("/qr/generate", async (req, res) => {
 router.get("/verify", async (req, res) => {
   try {
     const user = req.user;
-    
+
     res.json({
       success: true,
       message: 'Token válido',
@@ -368,7 +409,7 @@ router.post("/logout", async (req, res) => {
 router.post("/refresh", async (req, res) => {
   try {
     const user = req.user;
-    
+
     // gerar novo token
     const token = generateToken(user._id);
 

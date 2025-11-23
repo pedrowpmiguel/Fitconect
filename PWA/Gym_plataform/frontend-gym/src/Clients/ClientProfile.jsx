@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './ClientProfile.css';
+import './ClientProfile.scss';
 
 export default function ClientProfile() {
   const [user, setUser] = useState(null);
@@ -30,6 +30,7 @@ export default function ClientProfile() {
         }
 
         const data = await res.json();
+        console.log('Perfil recebido:', data.data.user);
         setUser(data.data.user);
       } catch (err) {
         setError(err.message || 'Erro ao obter perfil');
@@ -41,10 +42,6 @@ export default function ClientProfile() {
     fetchProfile();
   }, []);
 
-  if (loading) return <div className="client-profile"><p>Carregando perfil...</p></div>;
-  if (error) return <div className="client-profile error"><p>{error}</p></div>;
-  if (!user) return <div className="client-profile"><p>Perfil não disponível.</p></div>;
-
   const formatDate = (d) => {
     if (!d) return '-';
     try {
@@ -54,6 +51,10 @@ export default function ClientProfile() {
       return d;
     }
   };
+
+  if (loading) return <div className="client-profile"><p>Carregando perfil...</p></div>;
+  if (error) return <div className="client-profile error"><p>{error}</p></div>;
+  if (!user) return <div className="client-profile"><p>Perfil não disponível.</p></div>;
 
   return (
     <div className="client-profile">
@@ -95,13 +96,34 @@ export default function ClientProfile() {
 
           <div className="row">
             <div className="label">Personal Trainer</div>
-            <div className="value">{user.assignedTrainer ? (typeof user.assignedTrainer === 'object' ? `${user.assignedTrainer.firstName || ''} ${user.assignedTrainer.lastName || ''}` : user.assignedTrainer) : 'Nenhum'}</div>
+            <div className="value">
+              {user.assignedTrainer ? 
+                (typeof user.assignedTrainer === 'object' ? 
+                  `${user.assignedTrainer.firstName || ''} ${user.assignedTrainer.lastName || ''}` : 
+                  user.assignedTrainer
+                ) : 
+                'Nenhum'
+              }
+            </div>
           </div>
 
+          {/* Seção QR Code */}
           {user.qrCode && (
-            <div className="row">
-              <div className="label">QR Code</div>
-              <div className="value"><img src={user.qrCode} alt="QR Code" className="qr"/></div>
+            <div className="qr-section">
+              <h3>QR Code para Login Rápido</h3>
+              <div className="qr-container">
+                <img src={user.qrCode} alt="QR Code" className="qr-image"/>
+              </div>
+              <p className="qr-hint">Use este QR Code para fazer login rapidamente</p>
+            </div>
+          )}
+
+          {!user.qrCode && (
+            <div className="qr-section">
+              <h3>QR Code</h3>
+              <p className="qr-unavailable">
+                QR Code não disponível. Faça logout e login novamente para gerar.
+              </p>
             </div>
           )}
 

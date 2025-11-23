@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './Auth/Login';
+import HomePage from './components/HomePage';
 import Register from './Auth/Register';
 import ClientProfile from './Clients/ClientProfile';
-import './App.css';
+import './App.scss';
 
 function App() {
   // Verifica se o user está autenticado
@@ -20,10 +20,22 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Rotas públicas */}
-          <Route path="/login" element={<Login />} />
+          {/* Rota de Login (agora com HomePage que inclui QR Code) */}
+          <Route 
+            path="/login" 
+            element={
+              isAuthenticated() ? (
+                <Navigate to={getUserRole() === 'admin' ? '/produtos' : '/profile'} />
+              ) : (
+                <HomePage />
+              )
+            } 
+          />
+          
+          {/* Rota de Registo */}
           <Route path="/register" element={<Register />} />
 
+          {/* Rota de Produtos (Admin) */}
           <Route 
             path="/produtos" 
             element={
@@ -31,6 +43,12 @@ function App() {
                 <div className="placeholder-page">
                   <h1>Página de Produtos (Admin)</h1>
                   <p>Esta página será implementada em breve.</p>
+                  <button onClick={() => {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                  }}>
+                    Logout
+                  </button>
                 </div>
               ) : (
                 <Navigate to="/login" />
@@ -38,20 +56,23 @@ function App() {
             } 
           />
           
+          {/* Rota Principal (Dashboard) */}
           <Route 
             path="/" 
             element={
               isAuthenticated() ? (
-                <div className="placeholder-page">
-                  <h1>Página Inicial</h1>
-                  <p>Bem-vindo! O dashboard será implementado em breve.</p>
-                </div>
+                getUserRole() === 'admin' ? (
+                  <Navigate to="/produtos" />
+                ) : (
+                  <Navigate to="/profile" />
+                )
               ) : (
                 <Navigate to="/login" />
               )
             } 
           />
 
+          {/* Rota de Perfil do Cliente */}
           <Route
             path="/profile"
             element={
@@ -63,7 +84,7 @@ function App() {
             }
           />
 
-          {/* Rota padrão */}
+          {/* Rota padrão - redireciona para raiz */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
