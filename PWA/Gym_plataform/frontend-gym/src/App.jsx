@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import HomePage from './components/HomePage';
 import Register from './Auth/Register';
 import ClientProfile from './Clients/ClientProfile';
-import Dashboard from './Clients/Dashboard';
+import TrainerProfile from './Trainers/TrainerProfile';
+import ClientDashboard from './Clients/Dashboard';
+import TrainerDashboard from './Trainers/Dashboard';
 import './App.scss';
 
 function App() {
@@ -79,7 +81,7 @@ function App() {
             path="/dashboard" 
             element={
               isAuthenticated() && getUserRole() === 'trainer' ? (
-                <Dashboard />
+                <TrainerDashboard />
               ) : (
                 <Navigate to="/login" />
               )
@@ -91,7 +93,7 @@ function App() {
             path="/client/dashboard"
             element={
               isAuthenticated() && getUserRole() === 'client' ? (
-                <Dashboard />
+                <ClientDashboard />
               ) : (
                 <Navigate to="/login" />
               )
@@ -102,8 +104,20 @@ function App() {
           <Route
             path="/profile"
             element={
-              isAuthenticated() && getUserRole() === 'client' ? (
-                <ClientProfile />
+              isAuthenticated() ? (
+                getUserRole() === 'client' ? <ClientProfile /> : <Navigate to={getUserRole() === 'trainer' ? '/trainer/profile' : '/login'} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+
+          {/* Perfil do trainer */}
+          <Route
+            path="/trainer/profile"
+            element={
+              isAuthenticated() && getUserRole() === 'trainer' ? (
+                <TrainerProfile />
               ) : (
                 <Navigate to="/login" />
               )

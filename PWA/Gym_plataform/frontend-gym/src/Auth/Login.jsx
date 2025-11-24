@@ -47,7 +47,14 @@ const Login = ({ data }) => {
       window.dispatchEvent(new Event('userChanged'));
 
       // Redirecionar conforme role
-      navigate(responseData.data.user.role === 'admin' ? '/produtos' : '/profile');
+      const role = responseData.data.user.role;
+      if (role === 'admin') {
+        navigate('/produtos');
+      } else if (role === 'trainer') {
+        navigate('/dashboard');
+      } else {
+        navigate('/client/dashboard');
+      }
 
     } catch (err) {
       console.error('❌ Erro no login QR:', err);
@@ -103,7 +110,16 @@ const Login = ({ data }) => {
       window.dispatchEvent(new Event('userChanged'));
 
       setFormData({ username: '', password: '' });
-      navigate(responseData.data.user.role === 'admin' ? '/produtos' : '/profile');
+      
+      // Redirecionar conforme role
+      const role = responseData.data.user.role;
+      if (role === 'admin') {
+        navigate('/produtos');
+      } else if (role === 'trainer') {
+        navigate('/dashboard');
+      } else {
+        navigate('/client/dashboard');
+      }
 
     } catch (err) {
       console.error('❌ Erro no login:', err);
