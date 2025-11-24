@@ -1,0 +1,296 @@
+/* ===== CONTAINER PRINCIPAL ===== */
+.client-dashboard-container {
+  max-width: 100% !important;
+  padding: 30px !important;
+  background-color: #f8f9fa !important;
+  min-height: 100vh;
+}
+
+/* ===== TÍTULO ===== */
+.dashboard-title {
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
+  margin-bottom: 30px !important;
+}
+
+/* ===== PLANO ATIVO - CARD DESTAQUE ===== */
+.plan-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  padding: 32px !important;
+  margin-bottom: 30px !important;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.plan-card h2 {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin-bottom: 16px !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.plan-card p {
+  font-size: 16px !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  margin-bottom: 8px !important;
+}
+
+/* ===== GRID DE ESTATÍSTICAS - 5 COLUNAS ===== */
+.stats-cards {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 20px !important;
+  margin-bottom: 30px !important;
+}
+
+/* ===== CARDS DE ESTATÍSTICAS ===== */
+.stat-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+  text-align: center !important;
+  min-height: 140px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-4px) !important;
+  border-color: #3b82f6 !important;
+}
+
+.stat-card h4 {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #6b7280 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 12px !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.stat-card p {
+  font-size: 42px !important;
+  font-weight: 700 !important;
+  color: #3b82f6 !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+}
+
+/* ===== GRID DE GRÁFICOS - 2 COLUNAS ===== */
+.client-dashboard-container > .chart-card {
+  display: inline-block !important;
+  width: calc(50% - 10px) !important;
+  margin-right: 20px !important;
+  vertical-align: top !important;
+}
+
+.client-dashboard-container > .chart-card:nth-of-type(even) {
+  margin-right: 0 !important;
+}
+
+/* ===== CARDS DE GRÁFICOS ===== */
+.chart-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  margin-bottom: 20px !important;
+}
+
+.chart-card h3 {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
+  margin-bottom: 20px !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.chart-card p {
+  font-size: 14px !important;
+  color: #6b7280 !important;
+  font-style: italic !important;
+  text-align: center !important;
+  padding: 40px 0 !important;
+}
+
+/* ===== ÚLTIMOS TREINOS ===== */
+.recent-workouts {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  margin-top: 30px !important;
+}
+
+.recent-workouts h3 {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
+  margin-bottom: 20px !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.recent-workouts ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.recent-workouts li {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 16px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  transition: background 0.2s ease !important;
+}
+
+.recent-workouts li:last-child {
+  border-bottom: none !important;
+}
+
+.recent-workouts li:hover {
+  background: #f9fafb !important;
+}
+
+.recent-workouts li span:first-child {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #1a1a1a !important;
+}
+
+.recent-workouts li span.success {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+  padding: 6px 12px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.recent-workouts li span.fail {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  padding: 6px 12px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+/* ===== LOADER E ERROS ===== */
+.loader,
+.error {
+  text-align: center !important;
+  padding: 60px 20px !important;
+  font-size: 16px !important;
+  color: #6b7280 !important;
+}
+
+.error {
+  color: #dc2626 !important;
+  background: #fee2e2 !important;
+  border: 1px solid #fca5a5 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  margin: 20px !important;
+}
+
+/* ===== GRÁFICOS RECHARTS ===== */
+.recharts-wrapper {
+  margin: 0 auto !important;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #f3f4f6 !important;
+}
+
+.recharts-text {
+  fill: #6b7280 !important;
+  font-size: 12px !important;
+}
+
+.recharts-tooltip-wrapper {
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 1400px) {
+  .stats-cards {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .client-dashboard-container > .chart-card {
+    width: 100% !important;
+    margin-right: 0 !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .client-dashboard-container {
+    padding: 15px !important;
+  }
+  
+  .stats-cards {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .stat-card {
+    min-height: 100px !important;
+  }
+  
+  .stat-card p {
+    font-size: 32px !important;
+  }
+  
+  .plan-card {
+    padding: 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 22px !important;
+  }
+  
+  .plan-card h2 {
+    font-size: 20px !important;
+  }
+  
+  .stat-card p {
+    font-size: 28px !important;
+  }
+}

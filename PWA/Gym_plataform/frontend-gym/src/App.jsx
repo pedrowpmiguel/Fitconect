@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import HomePage from './components/HomePage';
 import Register from './Auth/Register';
 import ClientProfile from './Clients/ClientProfile';
+import Dashboard from './Clients/Dashboard';
 import './App.scss';
 
 function App() {
-  // Verifica se o user está autenticado
+
   const isAuthenticated = () => {
     return !!localStorage.getItem('token');
   };
@@ -16,26 +17,41 @@ function App() {
     return user ? JSON.parse(user).role : null;
   };
 
+  const getRedirectPath = () => {
+    const role = getUserRole();
+    switch (role) {
+      case 'admin':
+        return '/produtos';
+      case 'trainer':
+        return '/dashboard';
+      case 'client':
+        return '/client/dashboard';  
+      default:
+        return '/login';
+    }
+  };
+
   return (
     <Router>
       <div className="App">
         <Routes>
-          {/* Rota de Login (agora com HomePage que inclui QR Code) */}
+
+          {/* Login */}
           <Route 
             path="/login" 
             element={
               isAuthenticated() ? (
-                <Navigate to={getUserRole() === 'admin' ? '/produtos' : '/profile'} />
+                <Navigate to={getRedirectPath()} />
               ) : (
                 <HomePage />
               )
             } 
           />
-          
-          {/* Rota de Registo */}
+
+          {/* Registo */}
           <Route path="/register" element={<Register />} />
 
-          {/* Rota de Produtos (Admin) */}
+          {/* Admin */}
           <Route 
             path="/produtos" 
             element={
@@ -43,10 +59,12 @@ function App() {
                 <div className="placeholder-page">
                   <h1>Página de Produtos (Admin)</h1>
                   <p>Esta página será implementada em breve.</p>
-                  <button onClick={() => {
-                    localStorage.clear();
-                    window.location.href = '/login';
-                  }}>
+                  <button
+                    onClick={() => {
+                      localStorage.clear();
+                      window.location.href = '/login';
+                    }}
+                  >
                     Logout
                   </button>
                 </div>
@@ -55,28 +73,36 @@ function App() {
               )
             } 
           />
-          
-          {/* Rota Principal (Dashboard) */}
+
+          {/* Dashboard treinador */}
           <Route 
-            path="/" 
+            path="/dashboard" 
             element={
-              isAuthenticated() ? (
-                getUserRole() === 'admin' ? (
-                  <Navigate to="/produtos" />
-                ) : (
-                  <Navigate to="/profile" />
-                )
+              isAuthenticated() && getUserRole() === 'trainer' ? (
+                <Dashboard />
               ) : (
                 <Navigate to="/login" />
               )
             } 
           />
 
-          {/* Rota de Perfil do Cliente */}
+          {/* Dashboard cliente */}
+          <Route
+            path="/client/dashboard"
+            element={
+              isAuthenticated() && getUserRole() === 'client' ? (
+                <Dashboard />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+
+          {/* Perfil cliente*/}
           <Route
             path="/profile"
             element={
-              isAuthenticated() ? (
+              isAuthenticated() && getUserRole() === 'client' ? (
                 <ClientProfile />
               ) : (
                 <Navigate to="/login" />
@@ -84,8 +110,21 @@ function App() {
             }
           />
 
-          {/* Rota padrão - redireciona para raiz */}
+          {/* Rota raiz → redireciona */}
+          <Route 
+            path="/" 
+            element={
+              isAuthenticated() ? (
+                <Navigate to={getRedirectPath()} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            } 
+          />
+
+          {/* Rota desconhecida */}
           <Route path="*" element={<Navigate to="/" />} />
+
         </Routes>
       </div>
     </Router>
