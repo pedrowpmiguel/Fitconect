@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   LineChart,
@@ -14,13 +15,34 @@ import {
 import "./Dashboard.scss";
 
 export default function ClientDashboard() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchDashboard();
+    fetchUserProfile();
   }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("/api/users/profile", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUser(res.data.data);
+    } catch (err) {
+      console.error("Erro ao carregar perfil:", err);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
 
   const fetchDashboard = async () => {
     try {
@@ -62,7 +84,17 @@ export default function ClientDashboard() {
 
   return (
     <div className="client-dashboard-container">
-      <h1 className="dashboard-title">Dashboard do Cliente</h1>
+      {/* LOGOUT BUTTON - TOP RIGHT */}
+      <div className="logout-fixed-container">
+        {user && <span className="user-name-fixed">{user.firstName} {user.lastName}</span>}
+        <button className="btn-logout-fixed" onClick={handleLogout} title="Fazer logout">
+          ➜] Sair
+        </button>
+      </div>
+
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">Dashboard do Cliente</h1>
+      </div>
 
       {/* ------------------ PLANO ATIVO ------------------ */}
       <div className="plan-card">

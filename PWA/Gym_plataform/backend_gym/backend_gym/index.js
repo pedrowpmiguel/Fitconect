@@ -19,6 +19,7 @@ import workoutRoutes from "./routes/workouts.js";
 import clientWorkoutRoutes from "./routes/clientWorkouts.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import messageRoutes from "./routes/messages.js";
+import trainerRequestsRoutes from "./routes/trainerRequests.js";
 
 // Importar middleware
 import { authenticateToken } from "./middleware/auth.js";
@@ -96,6 +97,7 @@ app.use("/api/workouts", authenticateToken, workoutRoutes);
 app.use("/api/client/workouts", authenticateToken, clientWorkoutRoutes);
 app.use("/api/notifications", authenticateToken, notificationRoutes);
 app.use("/api/messages", authenticateToken, messageRoutes);
+app.use("/api/trainer-requests", authenticateToken, trainerRequestsRoutes);
 
 // Middleware para rotas não encontradas
 app.use((req, res) => {

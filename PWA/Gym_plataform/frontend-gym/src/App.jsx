@@ -6,6 +6,7 @@ import ClientProfile from './Clients/ClientProfile';
 import TrainerProfile from './Trainers/TrainerProfile';
 import ClientDashboard from './Clients/Dashboard';
 import TrainerDashboard from './Trainers/Dashboard';
+import FindTrainer from './components/FindTrainer/FindTrainer';
 import './App.scss';
 
 function App() {
@@ -118,6 +119,18 @@ function App() {
             element={
               isAuthenticated() && getUserRole() === 'trainer' ? (
                 <TrainerProfile />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+
+          {/* Encontrar Trainer */}
+          <Route
+            path="/find-trainer"
+            element={
+              isAuthenticated() && getUserRole() === 'client' ? (
+                <FindTrainer />
               ) : (
                 <Navigate to="/login" />
               )
