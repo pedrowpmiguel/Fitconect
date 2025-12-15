@@ -151,10 +151,10 @@ const PORT = process.env.PORT || 3000;
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📱 Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 URL: http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(` ${process.env.NODE_ENV || 'development'}`);
+  console.log(`URL: http://localhost:${PORT}`);
+  console.log(`http://localhost:${PORT}/health`);
 });
 
 // Tratamento de sinais para encerramento graceful

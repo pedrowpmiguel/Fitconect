@@ -47,7 +47,7 @@ router.get("/profile", authenticateToken, async (req, res) => {
 });
 
 // Atualizar perfil do utilizador atual
-router.put("/profile", async (req, res) => {
+router.put("/profile", authenticateToken, async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -270,7 +270,7 @@ router.get("/trainers", async (req, res) => {
 });
 
 // Listar clientes de um personal trainer
-router.get("/trainer/clients", async (req, res) => {
+router.get("/trainer/clients", authenticateToken, async (req, res) => {
   try {
     const trainerId = req.user._id;
     const page = parseInt(req.query.page) || 1;

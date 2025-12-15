@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import QRCode from "qrcode";
 import { validationResult } from "express-validator";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -22,8 +23,8 @@ const generateToken = (userId) => {
   );
 };
 
-// regsistro de user
-router.post("/register", async (req, res) => {
+// regsistro de user client
+router.post("/register/client", async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -132,6 +133,229 @@ router.post("/register", async (req, res) => {
     });
   }
 });
+
+// regsistro de user client
+router.post("/register/admin", async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Dados de entrada inválidos',
+        errors: errors.array()
+      });
+    }
+
+    const { username, email, password, firstName, lastName, phone, dateOfBirth, gender, role = 'admin' } = req.body;
+
+    // verificar se user existe
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: existingUser.email === email ? 'Email já registado' : 'Username já existe'
+      });
+    }
+
+    // criar user
+    const user = await User.create({
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      phone,
+      dateOfBirth,
+      gender,
+      role
+    });
+
+    // gerar QR Code
+    let qrCodeUrl = null;
+    try {
+      const qrData = JSON.stringify({
+        userId: user._id,
+        username: user.username,
+        timestamp: Date.now()
+      });
+      
+      qrCodeUrl = await QRCode.toDataURL(qrData);
+      user.qrCode = qrCodeUrl;
+      await user.save();
+      console.log('QR Code gerado com sucesso');
+    } catch (qrError) {
+      console.error('Erro ao gerar QR Code:', qrError);
+      // Continuar sem QR Code se houver erro
+    }
+
+    // gerar token
+    let token;
+    try {
+      token = generateToken(user._id);
+      console.log('Token gerado com sucesso');
+    } catch (tokenError) {
+      console.error('Erro ao gerar token:', tokenError);
+      throw new Error('Erro ao gerar token de autenticação');
+    }
+
+    // atualizar ultimo login
+    try {
+      user.lastLogin = new Date();
+      await user.save();
+      console.log('Último login atualizado');
+    } catch (loginError) {
+      console.error('Erro ao atualizar último login:', loginError);
+      // Não é crítico, continuar
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Utilizador registado com sucesso',
+      data: {
+        token,
+        user: user.getPublicProfile(),
+        qrCode: qrCodeUrl
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro no registo:', error);
+    console.error('Stack trace:', error.stack);
+    
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        success: false,
+        message: `${field} já existe`
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      details: process.env.NODE_ENV === 'development' ? {
+        name: error.name,
+        stack: error.stack
+      } : undefined
+    });
+  }
+});
+
+// regsistro de user client
+router.post("/register/trainer", async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Dados de entrada inválidos',
+        errors: errors.array()
+      });
+    }
+
+    const { username, email, password, firstName, lastName, phone, dateOfBirth, gender, role = 'trainer' } = req.body;
+
+    // verificar se user existe
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: existingUser.email === email ? 'Email já registado' : 'Username já existe'
+      });
+    }
+
+    // criar user
+    const user = await User.create({
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      phone,
+      dateOfBirth,
+      gender,
+      role
+    });
+
+    // gerar QR Code
+    let qrCodeUrl = null;
+    try {
+      const qrData = JSON.stringify({
+        userId: user._id,
+        username: user.username,
+        timestamp: Date.now()
+      });
+      
+      qrCodeUrl = await QRCode.toDataURL(qrData);
+      user.qrCode = qrCodeUrl;
+      await user.save();
+      console.log('QR Code gerado com sucesso');
+    } catch (qrError) {
+      console.error('Erro ao gerar QR Code:', qrError);
+      // Continuar sem QR Code se houver erro
+    }
+
+    // gerar token
+    let token;
+    try {
+      token = generateToken(user._id);
+      console.log('Token gerado com sucesso');
+    } catch (tokenError) {
+      console.error('Erro ao gerar token:', tokenError);
+      throw new Error('Erro ao gerar token de autenticação');
+    }
+
+    // atualizar ultimo login
+    try {
+      user.lastLogin = new Date();
+      await user.save();
+      console.log('Último login atualizado');
+    } catch (loginError) {
+      console.error('Erro ao atualizar último login:', loginError);
+      // Não é crítico, continuar
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Utilizador registado com sucesso',
+      data: {
+        token,
+        user: user.getPublicProfile(),
+        qrCode: qrCodeUrl
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro no registo:', error);
+    console.error('Stack trace:', error.stack);
+    
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        success: false,
+        message: `${field} já existe`
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      details: process.env.NODE_ENV === 'development' ? {
+        name: error.name,
+        stack: error.stack
+      } : undefined
+    });
+  }
+});
+
 
 // login de user
 router.post("/login", async (req, res) => {
@@ -291,7 +515,7 @@ router.post("/login/qr", async (req, res) => {
 });
 
 // gerar novo QR Code
-router.post("/qr/generate", async (req, res) => {
+router.post("/qr/generate", authenticateToken, async (req, res) => {
   try {
     const user = req.user;
 
@@ -326,7 +550,7 @@ router.post("/qr/generate", async (req, res) => {
 });
 
 // verificar token
-router.get("/verify", async (req, res) => {
+router.get("/verify", authenticateToken, async (req, res) => {
   try {
     const user = req.user;
     
@@ -365,7 +589,7 @@ router.post("/logout", async (req, res) => {
 });
 
 // refresh token (opcional)
-router.post("/refresh", async (req, res) => {
+router.post("/refresh", authenticateToken, async (req, res) => {
   try {
     const user = req.user;
     

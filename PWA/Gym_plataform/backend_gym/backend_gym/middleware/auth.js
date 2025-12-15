@@ -57,7 +57,7 @@ export const authenticateToken = async (req, res, next) => {
   }
 };
 
-// Middleware para verificar roles específicas
+// Middleware para verificar cargos específicos
 export const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
