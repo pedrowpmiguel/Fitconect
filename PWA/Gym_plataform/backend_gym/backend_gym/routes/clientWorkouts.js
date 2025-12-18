@@ -843,13 +843,19 @@ router.get("/dashboard", async (req, res) => {
       success: true,
       message: 'Dashboard obtido com sucesso',
       data: {
-        plan: activePlan ? {
+        plan: activePlan && activePlan.progress ? {
           id: activePlan._id,
           name: activePlan.name,
           currentWeek: activePlan.currentWeek,
           totalWeeks: activePlan.totalWeeks,
           completionRate: activePlan.progress.completionRate
-        } : null,
+        } : (activePlan ? {
+          id: activePlan._id,
+          name: activePlan.name,
+          currentWeek: activePlan.currentWeek,
+          totalWeeks: activePlan.totalWeeks,
+          completionRate: 0
+        } : null),
         statistics: {
           totalCompleted,
           totalNotCompleted,

@@ -19,6 +19,10 @@ import workoutRoutes from "./routes/workouts.js";
 import clientWorkoutRoutes from "./routes/clientWorkouts.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import messageRoutes from "./routes/messages.js";
+import trainerRequestsRoutes from "./routes/trainerRequests.js";
+
+// Importar middleware
+import { authenticateToken } from "./middleware/auth.js";
 
 // Conectar à base de dados
 connectDB();
@@ -88,11 +92,12 @@ app.get('/health', (req, res) => {
 
 // Rotas da API
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/workouts", workoutRoutes);
-app.use("/api/client/workouts", clientWorkoutRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/messages", messageRoutes);
+app.use("/api/users", authenticateToken, userRoutes);
+app.use("/api/workouts", authenticateToken, workoutRoutes);
+app.use("/api/client/workouts", authenticateToken, clientWorkoutRoutes);
+app.use("/api/notifications", authenticateToken, notificationRoutes);
+app.use("/api/messages", authenticateToken, messageRoutes);
+app.use("/api/trainer-requests", authenticateToken, trainerRequestsRoutes);
 
 // Middleware para rotas não encontradas
 app.use((req, res) => {

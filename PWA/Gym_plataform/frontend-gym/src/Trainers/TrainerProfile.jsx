@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import './ClientProfile.css';
+import './Profile.scss';
 
-export default function ClientProfile() {
+export default function TrainerProfile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,6 +30,7 @@ export default function ClientProfile() {
         }
 
         const data = await res.json();
+        console.log('Perfil do PT recebido:', data.data.user);
         setUser(data.data.user);
       } catch (err) {
         setError(err.message || 'Erro ao obter perfil');
@@ -41,10 +42,6 @@ export default function ClientProfile() {
     fetchProfile();
   }, []);
 
-  if (loading) return <div className="client-profile"><p>Carregando perfil...</p></div>;
-  if (error) return <div className="client-profile error"><p>{error}</p></div>;
-  if (!user) return <div className="client-profile"><p>Perfil não disponível.</p></div>;
-
   const formatDate = (d) => {
     if (!d) return '-';
     try {
@@ -55,8 +52,12 @@ export default function ClientProfile() {
     }
   };
 
+  if (loading) return <div className="trainer-profile"><p>Carregando perfil...</p></div>;
+  if (error) return <div className="trainer-profile error"><p>{error}</p></div>;
+  if (!user) return <div className="trainer-profile"><p>Perfil não disponível.</p></div>;
+
   return (
-    <div className="client-profile">
+    <div className="trainer-profile">
       <div className="profile-card">
         <div className="profile-header">
           <div className="avatar">
@@ -89,19 +90,39 @@ export default function ClientProfile() {
           </div>
 
           <div className="row">
+            <div className="label">Género</div>
+            <div className="value">
+              {user.gender ? (user.gender === 'male' ? 'Masculino' : user.gender === 'female' ? 'Feminino' : 'Outro') : '-'}
+            </div>
+          </div>
+
+          <div className="row">
             <div className="label">Status</div>
             <div className="value">{user.isActive ? 'Ativo' : 'Inativo'}</div>
           </div>
 
           <div className="row">
-            <div className="label">Personal Trainer</div>
-            <div className="value">{user.assignedTrainer ? (typeof user.assignedTrainer === 'object' ? `${user.assignedTrainer.firstName || ''} ${user.assignedTrainer.lastName || ''}` : user.assignedTrainer) : 'Nenhum'}</div>
+            <div className="label">Aprovado</div>
+            <div className="value">{user.isApproved ? 'Sim' : 'Aguardando aprovação'}</div>
           </div>
 
+          {/* Seção QR Code */}
           {user.qrCode && (
-            <div className="row">
-              <div className="label">QR Code</div>
-              <div className="value"><img src={user.qrCode} alt="QR Code" className="qr"/></div>
+            <div className="qr-section">
+              <h3>QR Code para Login Rápido</h3>
+              <div className="qr-container">
+                <img src={user.qrCode} alt="QR Code" className="qr-image"/>
+              </div>
+              <p className="qr-hint">Use este QR Code para fazer login rapidamente</p>
+            </div>
+          )}
+
+          {!user.qrCode && (
+            <div className="qr-section">
+              <h3>QR Code</h3>
+              <p className="qr-unavailable">
+                QR Code não disponível. Faça logout e login novamente para gerar.
+              </p>
             </div>
           )}
 

@@ -1,10 +1,30 @@
 import User from '../models/User.js';
+import { comparePassword } from '../utils/passwordUtils.js';
+
+/**
+ * Find a user by name + validate password or QR password
+ */
+export async function findUser({ name, password, isQrCode }) {
+	const user = await User.findOne({ name });
+	if (!user) throw new Error("This data is wrong");
+
+	// Login via QR code (password direto)
+	if (isQrCode) {
+		if (user.password !== password) throw new Error("User not valid");
+		return user;
+	}
+
+	// Login normal com hashing
+	const match = await comparePassword(password, user.password);
+	if (!match) throw new Error("User not valid");
+
+	return user;
+}
 
 /**
  * Request a trainer change for a client
  */
 export async function requestTrainerChange(clientId, requestedTrainerId, reason) {
-	// validações mínimas
 	const client = await User.findById(clientId);
 	if (!client) throw new Error('Client not found');
 	if (client.role !== 'client') throw new Error('User is not a client');
@@ -22,7 +42,6 @@ export async function requestTrainerChange(clientId, requestedTrainerId, reason)
 
 /**
  * Process (approve/reject) a trainer change request
- * action: 'approve' | 'reject'
  */
 export async function processTrainerChangeRequest(clientId, action, processorId) {
 	const client = await User.findById(clientId);
@@ -40,7 +59,7 @@ export async function processTrainerChangeRequest(clientId, action, processorId)
 
 	req.processedAt = Date.now();
 	req.processedBy = processorId;
-	// opcional: limpar requestedTrainer quando rejeitado? mantemos histórico
+
 	await client.save();
 	return client;
 }
@@ -54,7 +73,7 @@ export async function assignTrainerToClient(clientId, trainerId, adminId) {
 	if (client.role !== 'client') throw new Error('User is not a client');
 
 	client.assignedTrainer = trainerId;
-	// reset any pending request
+
 	client.trainerChangeRequest = {
 		status: 'approved',
 		requestedTrainer: trainerId,
@@ -62,6 +81,7 @@ export async function assignTrainerToClient(clientId, trainerId, adminId) {
 		processedAt: Date.now(),
 		processedBy: adminId
 	};
+
 	await client.save();
 	return client;
 }

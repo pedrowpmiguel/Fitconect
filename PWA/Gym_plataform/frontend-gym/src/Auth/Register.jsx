@@ -10,6 +10,7 @@ const Register = () => {
         phone: '',
         dateOfBirth: '',
         gender: '',
+        role: 'client',
         password: '',
         confirmPassword: ''
     });
@@ -99,8 +100,15 @@ const Register = () => {
             window.dispatchEvent(new Event('userChanged'));
             console.log('Evento userChanged disparado');
 
-            // Redireciona para a página principal
-            navigate('/');
+            // Redireciona conforme o role
+            const role = data.data.user.role;
+            if (role === 'admin') {
+                navigate('/produtos');
+            } else if (role === 'trainer') {
+                navigate('/dashboard');
+            } else {
+                navigate('/client/dashboard');
+            }
 
         } catch (err) {
             console.error('Erro no registo:', err);
@@ -201,20 +209,36 @@ const Register = () => {
                     </div>
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="gender">Género:</label>
-                    <select
-                        id="gender"
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        disabled={loading}
-                    >
-                        <option value="">Selecionar</option>
-                        <option value="male">Masculino</option>
-                        <option value="female">Feminino</option>
-                        <option value="other">Outro</option>
-                    </select>
+                <div className="form-row">
+                    <div className="form-group">
+                        <label htmlFor="gender">Género:</label>
+                        <select
+                            id="gender"
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            disabled={loading}
+                        >
+                            <option value="">Selecionar</option>
+                            <option value="male">Masculino</option>
+                            <option value="female">Feminino</option>
+                            <option value="other">Outro</option>
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="role">Tipo de Conta:</label>
+                        <select
+                            id="role"
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            disabled={loading}
+                        >
+                            <option value="client">Cliente</option>
+                            <option value="trainer">Personal Trainer</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className="form-group">

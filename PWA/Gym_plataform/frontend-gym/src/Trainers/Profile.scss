@@ -1,0 +1,138 @@
+.client-profile,
+.trainer-profile {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.client-profile.error,
+.trainer-profile.error {
+  color: #d32f2f;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.profile-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar .initials {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.profile-info h2 {
+  margin: 0 0 5px 0;
+  font-size: 24px;
+}
+
+.profile-info .muted {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.profile-body {
+  padding: 30px 20px;
+}
+
+.profile-body .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-body .row:last-of-type {
+  border-bottom: none;
+}
+
+.profile-body .label {
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.profile-body .value {
+  color: #333;
+  text-align: right;
+  flex: 1;
+}
+
+.qr-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.qr-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.qr-image {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+}
+
+.qr-hint {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.qr-unavailable {
+  color: #999;
+  font-size: 14px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
