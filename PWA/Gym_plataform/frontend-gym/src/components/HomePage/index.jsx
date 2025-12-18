@@ -24,7 +24,7 @@ const HomePage = () => {
             className={styles.qrButton}
             type="button"
           >
-            {showQRCode ? '❌ Fechar Scanner' : '📷 Login com QR Code'}
+            {showQRCode ? ' Fechar Scanner' : ' Login com QR Code'}
           </button>
           
           {showQRCode && (

@@ -67,7 +67,7 @@ export default function FindTrainer() {
                 <div className="trainer-info">
                   <h3>{trainer.firstName} {trainer.lastName}</h3>
                   <p className="username">@{trainer.username}</p>
-                  {trainer.isApproved && <p className="approved">✓ Aprovado</p>}
+                  {trainer.isApproved && <p className="approved">Aprovado</p>}
                 </div>
               </div>
 
@@ -86,7 +86,7 @@ export default function FindTrainer() {
                 className="btn-expand"
                 onClick={() => setSelectedTrainer(selectedTrainer === trainer._id ? null : trainer._id)}
               >
-                {selectedTrainer === trainer._id ? '▼ Fechar' : '▶ Ver mais'}
+                {selectedTrainer === trainer._id ? 'Fechar' : 'Ver mais'}
               </button>
 
               {selectedTrainer === trainer._id && (

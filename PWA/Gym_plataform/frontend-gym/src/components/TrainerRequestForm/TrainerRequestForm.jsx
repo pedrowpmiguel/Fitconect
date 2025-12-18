@@ -60,7 +60,7 @@ export default function TrainerRequestForm({ trainerId, trainerName, onSuccess }
             id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Deixe uma mensagem explicando por que quer trabalhar com este PT..."
+            placeholder="Deixe uma mensagem a explicar por que quer trabalhar com este PT..."
             rows="4"
             disabled={loading || success}
           />
